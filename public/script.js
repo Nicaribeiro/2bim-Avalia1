@@ -1,38 +1,61 @@
 // script.js
-// Versao inicial: todo o trabalho acontece no navegador.
-// A tarefa consiste em levar gerarDesenho para o servidor (Pages Functions)
-// e fazer esta pagina apenas enviar o numero e exibir a resposta.
-
-import { gerarDesenho, numeroValido } from "./desenho.js";
+// O navegador só envia o número e o token do Google para o servidor
+// e mostra o desenho que o servidor devolver.
 
 const formulario = document.getElementById("formulario");
 const campoNumero = document.getElementById("numero");
-const campoEmail = document.getElementById("email");
 const area = document.getElementById("desenho");
 const mensagem = document.getElementById("mensagem");
 const botaoBaixar = document.getElementById("baixar");
 
+let tokenAtual = "";
 let svgAtual = "";
 
-formulario.addEventListener("submit", (evento) => {
+// O Google chama esta função quando a pessoa entra com a conta dela.
+window.aoEntrar = (resposta) => {
+  tokenAtual = resposta.credential;
+  mensagem.textContent = "Login feito com sucesso. Agora é só desenhar.";
+};
+
+formulario.addEventListener("submit", async (evento) => {
   evento.preventDefault();
   mensagem.textContent = "";
 
   const numero = Number(campoNumero.value);
-  const email = campoEmail.value.trim();
 
-  if (!numeroValido(numero)) {
-    mensagem.textContent = "Digite um inteiro entre 1 e 100.";
-    return;
-  }
-  if (email === "") {
-    mensagem.textContent = "Informe um e-mail.";
-    return;
+  const cabecalhos = { "Content-Type": "application/json" };
+  if (tokenAtual) {
+    cabecalhos.Authorization = "Bearer " + tokenAtual;
   }
 
-  svgAtual = gerarDesenho(numero, email);
-  area.innerHTML = svgAtual;
-  botaoBaixar.hidden = false;
+  try {
+    const resposta = await fetch("/api/desenho", {
+      method: "POST",
+      headers: cabecalhos,
+      body: JSON.stringify({ numero }),
+    });
+
+    if (resposta.status === 400) {
+      mensagem.textContent = "Erro 400: digite um número inteiro entre 1 e 100.";
+      return;
+    }
+    if (resposta.status === 401) {
+      mensagem.textContent =
+        "Erro 401: entre com o Google antes de desenhar. Se você já entrou, faça o login de novo, porque ele pode ter expirado.";
+      return;
+    }
+    if (!resposta.ok) {
+      mensagem.textContent =
+        "Erro " + resposta.status + ": não foi possível gerar o desenho.";
+      return;
+    }
+
+    svgAtual = await resposta.text();
+    area.innerHTML = svgAtual;
+    botaoBaixar.hidden = false;
+  } catch {
+    mensagem.textContent = "Não foi possível falar com o servidor.";
+  }
 });
 
 botaoBaixar.addEventListener("click", () => {
