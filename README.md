@@ -22,6 +22,6 @@ Framework preset: `None`. Build command: vazio. Build output directory: `public`
 
 ## Identificação (preencha após o fork)
 
-Nome: 
-RA: 
+Nome: Nicoly Ribeiro Barbosa
+RA: 2026108297
 URL: https://
