@@ -11,7 +11,6 @@ export async function onRequest(context) {
     });
   }
 
-    // Verificação 2: o corpo precisa ser um JSON válido com um número de 1 a 100 (senão, erro 400)
   let corpo;
   try {
     corpo = await request.json();
@@ -26,7 +25,6 @@ export async function onRequest(context) {
     });
   }
 
-    // Verificação 3: o token do Google precisa ser válido (senão, erro 401)
   const autorizacao = request.headers.get("Authorization") || "";
   const token = autorizacao.startsWith("Bearer ")
     ? autorizacao.slice(7).trim()
@@ -59,7 +57,6 @@ export async function onRequest(context) {
 
   const email = dados.email;
 
-    // Tudo certo: gera o desenho assinado com o e-mail do Google (resposta 200)
   const svg = gerarDesenho(numero, email);
   return new Response(svg, {
     status: 200,
