@@ -1,7 +1,3 @@
-// script.js
-// O navegador só envia o número e o token do Google para o servidor
-// e mostra o desenho que o servidor devolver.
-
 const formulario = document.getElementById("formulario");
 const campoNumero = document.getElementById("numero");
 const area = document.getElementById("desenho");
@@ -11,7 +7,6 @@ const botaoBaixar = document.getElementById("baixar");
 let tokenAtual = "";
 let svgAtual = "";
 
-// O Google chama esta função quando a pessoa entra com a conta dela.
 window.aoEntrar = (resposta) => {
   tokenAtual = resposta.credential;
   mensagem.textContent = "Login feito com sucesso. Agora é só desenhar.";
