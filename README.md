@@ -24,4 +24,4 @@ Framework preset: `None`. Build command: vazio. Build output directory: `public`
 
 Nome: Nicoly Ribeiro Barbosa
 RA: 2026108297
-URL: https://desenho-nicoly.pages.dev
+URL: https://nicoly-desenho.pages.dev
